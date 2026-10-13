@@ -4,7 +4,7 @@ from app.routes.materials import router as materials_router
 from app.routes.tutor import router as tutor_router
 from app.routes.quiz import router as quiz_router
 from app.services.gemini_service import is_gemini_configured
-from app.state import store
+from app.state import state
 
 app = FastAPI(
     title="StudyPilot AI API",
@@ -38,7 +38,8 @@ def health_check():
         "service": "StudyPilot AI Backend",
         "gemini_configured": gemini_active,
         "mode": "live_gemini" if gemini_active else "demo_mode",
-        "materials_count": len(store.materials),
-        "quizzes_count": len(store.quiz_sessions),
+        "materials_count": len(state.materials),
+        "quizzes_count": len(state.active_quizzes),
         "version": "1.0.0"
     }
+
