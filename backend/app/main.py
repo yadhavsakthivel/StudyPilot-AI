@@ -1,53 +1,44 @@
-import logging
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from .config import settings
-from .routes import health, materials, tutor, quiz
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
-logger = logging.getLogger("studypilot")
+from app.routes.materials import router as materials_router
+from app.routes.tutor import router as tutor_router
+from app.routes.quiz import router as quiz_router
+from app.services.gemini_service import is_gemini_configured
+from app.state import store
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version=settings.VERSION,
-    description=settings.DESCRIPTION
+    title="StudyPilot AI API",
+    description="Backend API for StudyPilot AI — Personalized Learning Companion",
+    version="1.0.0"
 )
 
-# CORS configuration: allows localhost, specified origins, and all *.vercel.app frontend deployments
+# CORS configuration for development and production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if "*" in settings.cors_origins else (settings.cors_origins + ["http://localhost:5173", "http://127.0.0.1:5173"]),
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API Routers
-app.include_router(health.router)
-app.include_router(materials.router)
-app.include_router(tutor.router)
-app.include_router(quiz.router)
+# Include Routers
+app.include_router(materials_router)
+app.include_router(tutor_router)
+app.include_router(quiz_router)
 
-@app.get("/")
-async def root():
+@app.get("/health")
+def health_check():
+    """
+    Health check endpoint reporting API status, in-memory material count,
+    and Gemini configuration status.
+    """
+    gemini_active = is_gemini_configured()
     return {
-        "name": settings.PROJECT_NAME,
-        "version": settings.VERSION,
-        "status": "online",
-        "docs_url": "/docs",
-        "ai_configured": settings.is_ai_configured
+        "status": "healthy",
+        "service": "StudyPilot AI Backend",
+        "gemini_configured": gemini_active,
+        "mode": "live_gemini" if gemini_active else "demo_mode",
+        "materials_count": len(store.materials),
+        "quizzes_count": len(store.quiz_sessions),
+        "version": "1.0.0"
     }
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled server error on {request.method} {request.url.path}: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "An unexpected internal server error occurred. Please try again."}
-    )
