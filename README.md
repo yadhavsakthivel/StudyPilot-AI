@@ -28,8 +28,9 @@ StudyPilot AI turns dense study materials (lecture notes, academic PDFs, textboo
 - **Validation**: Pydantic v2
 - **PDF Extraction**: PyMuPDF (`fitz`) — extracts text page-by-page, preserving 1-indexed page numbers.
 - **Retrieval Engine**: Pure lexical/keyword matching with BM25-style IDF weighting and phrase matching. Strictly **no vector databases**, **no embeddings**, and **no heavy ML packages**.
-- **AI Engine**: Google Gemini API (`gemini-2.5-flash` via `google-genai`). Features an explicitly labeled, deterministic **Demo Mode** fallback when an API key is not configured.
+- **AI Engine**: Google Gemini API (`gemini-3.1-flash-lite` via `google-genai`). Features an explicitly labeled, deterministic **Demo Mode** fallback when an API key is not configured.
 - **State**: Thread-safe in-memory store (`AppState`). *No databases or ORMs required.*
+- **Live Backend**: `https://studypilot-ai-backend-lyki.onrender.com`
 
 ---
 

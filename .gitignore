@@ -37,9 +37,15 @@ frontend/dist-ssr/
 # Environment Variables & Secrets (CRITICAL)
 .env
 *.env
+.env.*
 !.env.example
 *.key
 *.pem
+
+# Uploaded documents & local PDFs
+*.pdf
+backend/data/
+uploads/
 
 # Editor & OS files
 .vscode/

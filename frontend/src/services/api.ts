@@ -8,8 +8,8 @@ import {
   QuizSummaryResponse,
 } from '../types';
 
-// Use environment variable if set, otherwise fallback to local proxy `/api` or localhost
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+// Use environment variable if set (VITE_API_BASE_URL or VITE_API_URL), otherwise fallback to local proxy `/api`
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '/api';
 
 class ApiError extends Error {
   status: number;

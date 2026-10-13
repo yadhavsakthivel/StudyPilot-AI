@@ -10,9 +10,9 @@ class Settings:
     VERSION: str = "1.0.0"
     DESCRIPTION: str = "Personalized Learning Companion API"
     
-    # Gemini API Key
+    # Gemini API Key & Model
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "").strip()
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
     
     # Check if Gemini key is available and non-empty
     @property
@@ -22,9 +22,11 @@ class Settings:
     # CORS configuration
     @property
     def cors_origins(self) -> List[str]:
-        raw = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000")
+        raw = os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
+        )
         origins = [origin.strip() for origin in raw.split(",") if origin.strip()]
-        # Allow wildcards or localhost variations
         return origins
 
     # Upload constraints
